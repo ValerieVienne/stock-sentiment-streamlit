@@ -5,7 +5,7 @@ import time
 from datetime import datetime, timedelta
 import os
 import praw
-from pygooglenews import GoogleNews
+from gnews import GNews
 from dotenv import load_dotenv
 
 
@@ -44,17 +44,19 @@ def get_yahoo_news_headlines(ticker):
 
 # Function to get Google News
 def get_google_news(ticker):
-    gn = GoogleNews(lang='en')
-    search = gn.search(ticker)
+    # Initialize the GNews object
+    google_news = GNews(language='en', country='US', max_results=20)
 
-    entries = search['entries']
+    # Search for news articles related to ticker
+    news_results = google_news.get_news(ticker)
+
     #print(entries)
     news_list = []
-    for entry in entries[:20]:  # limit
+    for article in news_results[:20]:  # limit
         news_list.append({
-            "headline": entry.get('title', ''),
-            "link": entry.get('link', ''),
-            "summary": entry.get('summary_1', '') #on purpose because summary has only text links
+            "headline": article.get('title', ''),
+            "link": article.get('url', ''),
+            "summary": article.get('text', '') #on purpose because summary has only text links
         })
     return news_list
 
